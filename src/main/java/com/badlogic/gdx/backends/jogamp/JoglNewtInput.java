@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.jogamp.nativewindow.util.Point;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -560,6 +561,11 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 	}
 
 	@Override
+	public boolean isButtonJustPressed(int button) {
+		return false;
+	}
+
+	@Override
 	public void vibrate (long[] pattern, int repeat) {
 	}
 
@@ -672,6 +678,16 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 	}
 
 	@Override
+	public void setCatchKey(int keycode, boolean catchKey) {
+		throw new GdxRuntimeException("Not implemented");
+	}
+
+	@Override
+	public boolean isCatchKey(int keycode) {
+		return false;
+	}
+
+	@Override
 	public float getGyroscopeX() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -686,6 +702,11 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 	@Override
 	public float getGyroscopeZ() {
 		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxPointers() {
 		return 0;
 	}
 }

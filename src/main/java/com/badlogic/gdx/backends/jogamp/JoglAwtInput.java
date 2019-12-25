@@ -58,6 +58,7 @@ import javax.swing.event.DocumentListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 
 public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
@@ -694,6 +695,11 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	@Override
+	public boolean isButtonJustPressed(int button) {
+		return false;
+	}
+
+	@Override
 	public void vibrate (long[] pattern, int repeat) {
 	}
 
@@ -831,6 +837,16 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	@Override
+	public void setCatchKey(int keycode, boolean catchKey) {
+		throw new GdxRuntimeException("Not implemented");
+	}
+
+	@Override
+	public boolean isCatchKey(int keycode) {
+		return false;
+	}
+
+	@Override
 	public float getGyroscopeX() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -845,6 +861,11 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	@Override
 	public float getGyroscopeZ() {
 		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxPointers() {
 		return 0;
 	}
 }

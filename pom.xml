@@ -3,11 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.harium.gdx</groupId>
+    <groupId>com.bumfo.gdx</groupId>
     <artifactId>gdx-backend-jogl</artifactId>
-    <version>1.9.9</version>
+    <version>1.9.10</version>
     <properties>
-        <libgdx.version>1.9.9</libgdx.version>
+        <libgdx.version>1.9.10</libgdx.version>
         <jogamp.version>2.3.2</jogamp.version>
         <javadoc.opts>-Xdoclint:none</javadoc.opts>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,11 +15,11 @@
     </properties>
     <name>Propan GDX JoGL</name>
     <description>Libgdx JoGL backend</description>
-    <url>http://github.com/harium/libgdx-jogl-backend</url>
+    <url>http://github.com/bumfo/libgdx-jogl-backend</url>
     <scm>
-        <connection>scm:git:git://github.com/harium/libgdx-jogl-backend.git</connection>
-        <developerConnection>scm:git:ssh://github.com:harium/libgdx-jogl-backend.git</developerConnection>
-        <url>http://github.com/harium/libgdx-jogl-backend/tree/master</url>
+        <connection>scm:git:git://github.com/bumfo/libgdx-jogl-backend.git</connection>
+        <developerConnection>scm:git:ssh://github.com:bumfo/libgdx-jogl-backend.git</developerConnection>
+        <url>http://github.com/bumfo/libgdx-jogl-backend/tree/master</url>
     </scm>
     <licenses>
         <license>
