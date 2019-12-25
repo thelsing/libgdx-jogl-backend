@@ -11,7 +11,7 @@ Forked from: [https://github.com/gouessej/libgdx](https://github.com/gouessej/li
 
 ## Gradle
 ```
-compile 'com.bumfo.gdx:gdx-backend-jogl:1.9.10
+compile 'com.bumfo.gdx:gdx-backend-jogl:1.9.10'
 ```
 
 ## Maven
