@@ -312,6 +312,10 @@ public class JoglGL20 implements GL20 {
 		GLContext.getCurrentGL().glGenerateMipmap(target);
 	}
 
+	public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
+		return glGetActiveAttrib(program, index, size, (Buffer) type);
+	}
+
 	@Override
 	public String glGetActiveAttrib (int program, int index, IntBuffer size, Buffer type) {
 		int[] length = new int[1];
