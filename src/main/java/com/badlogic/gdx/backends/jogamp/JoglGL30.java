@@ -198,6 +198,11 @@ public class JoglGL30 extends JoglGL20 implements GL30 {
 	}
 
 	@Override
+	public Buffer glMapBufferRange(int i, int i1, int i2, int i3) {
+		return GLContext.getCurrentGL().getGL2ES3().glMapBufferRange(i, i1, i2, i3);
+	}
+
+	@Override
 	public void glFlushMappedBufferRange (int target, int offset, int length) {
 		GLContext.getCurrentGL().glFlushMappedBufferRange(target, offset, length);
 	}

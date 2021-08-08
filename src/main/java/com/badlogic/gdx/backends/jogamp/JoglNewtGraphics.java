@@ -73,6 +73,31 @@ public class JoglNewtGraphics extends JoglGraphicsBase {
 	}
 
 	@Override
+	public float getBackBufferScale() {
+		return 0;
+	}
+
+	@Override
+	public int getSafeInsetLeft() {
+		return 0;
+	}
+
+	@Override
+	public int getSafeInsetTop() {
+		return 0;
+	}
+
+	@Override
+	public int getSafeInsetBottom() {
+		return 0;
+	}
+
+	@Override
+	public int getSafeInsetRight() {
+		return 0;
+	}
+
+	@Override
 	public int getWidth () {
 		return getCanvas().getWidth();
 	}
@@ -210,6 +235,11 @@ public class JoglNewtGraphics extends JoglGraphicsBase {
 	public void setResizable(boolean resizable) {
 		getCanvas().setResizable(resizable);
 		this.config.resizable = resizable;
+	}
+
+	@Override
+	public void setForegroundFPS(int i) {
+
 	}
 
 	@Override

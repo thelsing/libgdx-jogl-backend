@@ -312,12 +312,8 @@ public class JoglGL20 implements GL20 {
 		GLContext.getCurrentGL().glGenerateMipmap(target);
 	}
 
-	public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
-		return glGetActiveAttrib(program, index, size, (Buffer) type);
-	}
-
 	@Override
-	public String glGetActiveAttrib (int program, int index, IntBuffer size, Buffer type) {
+	public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
 		int[] length = new int[1];
 		int[] sizeTmp = new int[2];
 		int[] typeTmp = new int[1];
@@ -329,12 +325,8 @@ public class JoglGL20 implements GL20 {
 		return new String(name, 0, length[0]);
 	}
 
-	public String glGetActiveUniform (int program, int index, IntBuffer size, IntBuffer type) {
-		return glGetActiveUniform(program, index, size, (Buffer) type);
-	}
-
 	@Override
-	public String glGetActiveUniform (int program, int index, IntBuffer size, Buffer type) {
+	public String glGetActiveUniform (int program, int index, IntBuffer size, IntBuffer type) {
 		int[] length = new int[1];
 		int[] sizeTmp = new int[2];
 		int[] typeTmp = new int[1];

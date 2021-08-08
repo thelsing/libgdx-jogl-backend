@@ -28,6 +28,11 @@ import com.badlogic.gdx.utils.Clipboard;
 /** Clipboard implementation for desktop that uses the system clipboard via the default AWT {@link Toolkit}.
  * @author mzechner */
 public class JoglAwtClipboard implements Clipboard, ClipboardOwner {
+	@Override
+	public boolean hasContents() {
+		return false;
+	}
+
 	@SuppressWarnings("null")
 	@Override
 	public String getContents () {

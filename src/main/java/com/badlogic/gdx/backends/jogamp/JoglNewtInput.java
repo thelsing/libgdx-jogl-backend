@@ -120,6 +120,11 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 		throw new UnsupportedOperationException("getTextInput not supported by JoglInput, rather use JoglAWTInput");
 	}
 
+	@Override
+	public void getTextInput(TextInputListener textInputListener, String s, String s1, String s2, OnscreenKeyboardType onscreenKeyboardType) {
+
+	}
+
 
 	public void getPlaceholderTextInput (final TextInputListener listener, final String title, final String placeholder) {
 		throw new UnsupportedOperationException("getPlaceholderTextInput not supported by JoglInput, rather use JoglAWTInput");
@@ -228,7 +233,7 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 						processor.mouseMoved(e.x, e.y);
 						break;
 					case TouchEvent.TOUCH_SCROLLED:
-						processor.scrolled((int) e.scrollAmount);
+						processor.scrolled((int) e.scrollAmount, 0);
 						break;
 					}
 					usedTouchEvents.free(e);
@@ -264,6 +269,11 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 
 	@Override
 	public void setOnscreenKeyboardVisible (boolean visible) {
+
+	}
+
+	@Override
+	public void setOnscreenKeyboardVisible(boolean b, OnscreenKeyboardType onscreenKeyboardType) {
 
 	}
 

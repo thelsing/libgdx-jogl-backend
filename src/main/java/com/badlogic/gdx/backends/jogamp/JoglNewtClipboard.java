@@ -30,6 +30,11 @@ public class JoglNewtClipboard implements Clipboard {
 	}
 
 	@Override
+	public boolean hasContents() {
+		return false;
+	}
+
+	@Override
 	public String getContents() {
 		return null;
 	}

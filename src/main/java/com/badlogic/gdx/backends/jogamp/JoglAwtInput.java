@@ -171,6 +171,11 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 		});
 	}
 
+	@Override
+	public void getTextInput(TextInputListener textInputListener, String s, String s1, String s2, OnscreenKeyboardType onscreenKeyboardType) {
+
+	}
+
 	public void getPlaceholderTextInput (final TextInputListener listener, final String title, final String placeholder) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -363,7 +368,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 						processor.mouseMoved(e.x, e.y);
 						break;
 					case TouchEvent.TOUCH_SCROLLED:
-						processor.scrolled(e.scrollAmount);
+						processor.scrolled(e.scrollAmount, 0);
 						break;
 					}
 					usedTouchEvents.free(e);
@@ -399,6 +404,11 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void setOnscreenKeyboardVisible (boolean visible) {
+
+	}
+
+	@Override
+	public void setOnscreenKeyboardVisible(boolean b, OnscreenKeyboardType onscreenKeyboardType) {
 
 	}
 
