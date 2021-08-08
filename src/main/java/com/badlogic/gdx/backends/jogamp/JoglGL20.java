@@ -329,6 +329,10 @@ public class JoglGL20 implements GL20 {
 		return new String(name, 0, length[0]);
 	}
 
+	public String glGetActiveUniform (int program, int index, IntBuffer size, IntBuffer type) {
+		return glGetActiveUniform(program, index, size, (Buffer) type);
+	}
+
 	@Override
 	public String glGetActiveUniform (int program, int index, IntBuffer size, Buffer type) {
 		int[] length = new int[1];
