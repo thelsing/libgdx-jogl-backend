@@ -206,7 +206,7 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
 		setContinuousRendering(true);
-		created = false;
+		//created = false;
 	}
 
 	@Override
