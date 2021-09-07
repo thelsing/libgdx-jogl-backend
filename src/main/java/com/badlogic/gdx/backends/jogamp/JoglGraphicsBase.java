@@ -20,7 +20,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.backends.jogamp.audio.OpenALAudio;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALLwjglAudio;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
@@ -175,7 +175,7 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 					frameId++;
 					listener.render();
 					if (Gdx.audio != null) {
-					    ((OpenALAudio) Gdx.audio).update();
+					    ((OpenALLwjglAudio) Gdx.audio).update();
 					}
 				}
 			}
@@ -206,7 +206,7 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
 		setContinuousRendering(true);
-		//created = false;
+		created = false;
 	}
 
 	@Override

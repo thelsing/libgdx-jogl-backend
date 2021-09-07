@@ -16,7 +16,8 @@
 package com.badlogic.gdx.backends.jogamp;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.backends.jogamp.audio.OpenALAudio;
+import com.badlogic.gdx.backends.lwjgl.LwjglNativesLoader;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALLwjglAudio;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -26,7 +27,7 @@ public abstract class JoglApplicationBase implements Application {
     Input input;
     protected JoglNet net;
     JoglFiles files;
-    OpenALAudio audio;
+    OpenALLwjglAudio audio;
     protected final Array<Runnable> runnables = new Array<Runnable>();
     protected final Array<Runnable> executedRunnables = new Array<Runnable>();
     int logLevel = LOG_INFO;
@@ -37,14 +38,16 @@ public abstract class JoglApplicationBase implements Application {
 
     public JoglApplicationBase(final ApplicationListener listener, final JoglApplicationConfiguration config) {
         super();
+
         JoglNativesLoader.load();
+        LwjglNativesLoader.load();
         this.applicationLogger = new JoglApplicationLogger();
         this.listener = listener;
         this.graphics = createGraphics(listener, config);
         this.input = createInput(graphics);
         if (!JoglApplicationConfiguration.disableAudio && Gdx.audio == null) {
             try {
-                audio = new OpenALAudio(config.audioDeviceSimultaneousSources, config.audioDeviceBufferCount, config.audioDeviceBufferSize);
+                audio = new OpenALLwjglAudio(config.audioDeviceSimultaneousSources, config.audioDeviceBufferCount, config.audioDeviceBufferSize);
             } catch (Throwable t) {
                 log("JoglApplication", "Couldn't initialize audio, disabling audio", t);
                 JoglApplicationConfiguration.disableAudio = true;
