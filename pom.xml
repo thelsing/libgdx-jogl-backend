@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.bumfo.gdx</groupId>
     <artifactId>gdx-backend-jogl</artifactId>
-    <version>1.10.0</version>
+    <version>1.10.1</version>
     <properties>
         <libgdx.version>1.10.0</libgdx.version>
         <jogamp.version>2.3.2</jogamp.version>
