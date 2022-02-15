@@ -16,18 +16,7 @@
 
 package com.badlogic.gdx.backends.jogamp;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -37,10 +26,8 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -55,90 +42,114 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import TUIO.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 
-public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
-	class KeyEvent {
-		static final int KEY_DOWN = 0;
-		static final int KEY_UP = 1;
-		static final int KEY_TYPED = 2;
+public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, TuioListener {
+	private final int maxPointers = 11;
 
-		long timeStamp;
-		int type;
-		int keyCode;
-		char keyChar;
-	}
+	private final List<KeyEvent> keyEvents = new ArrayList<>();
+	private final List<TouchEvent> touchEvents = new ArrayList<>();
+	private final int[] touchX = new int[maxPointers];
+	private final int[] touchY = new int[maxPointers];
+	private final int[] deltaX = new int[maxPointers];
+	private final int[] deltaY = new int[maxPointers];
+	private int lastTouchX;
+	private int lastTouchY;
+	private int lastDeltaX;
+	private int lastDeltaY;
+	private boolean touchDown = false;
+	private boolean justTouched = false;
+	private final Set<Integer> keys = new HashSet<>();
+	private final Set<Integer> pressedButtons = new HashSet<>();
+	private InputProcessor processor;
+	private Component component;
+	private boolean catched = false;
+	private Robot robot = null;
+	private long currentEventTimeStamp;
+	private JFrame frame;
+	private final Dimension screenSize;
+	private TuioClient tuioClient;
+	private final Map<Long, Integer> tuioIDToPointer = new HashMap<>();
+	private final Set<Integer> usedPointers = new HashSet<>();
 
-	class TouchEvent {
-		static final int TOUCH_DOWN = 0;
-		static final int TOUCH_UP = 1;
-		static final int TOUCH_DRAGGED = 2;
-		static final int TOUCH_MOVED = 3;
-		static final int TOUCH_SCROLLED = 4;
-
-		long timeStamp;
-		int type;
-		int x;
-		int y;
-		int pointer;
-		int button;
-		int scrollAmount;
-	}
-
-	Pool<KeyEvent> usedKeyEvents = new Pool<KeyEvent>(16, 1000) {
+	private final Pool<KeyEvent> usedKeyEvents = new Pool<KeyEvent>(16, 1000) {
 		protected KeyEvent newObject () {
 			return new KeyEvent();
 		}
 	};
 
-	Pool<TouchEvent> usedTouchEvents = new Pool<TouchEvent>(16, 1000) {
+	private final Pool<TouchEvent> usedTouchEvents = new Pool<TouchEvent>(16, 1000) {
 		protected TouchEvent newObject () {
 			return new TouchEvent();
 		}
 	};
 
-	List<KeyEvent> keyEvents = new ArrayList<KeyEvent>();
-	List<TouchEvent> touchEvents = new ArrayList<TouchEvent>();
-	int touchX = 0;
-	int touchY = 0;
-	int deltaX = 0;
-	int deltaY = 0;
-	boolean touchDown = false;
-	boolean justTouched = false;
-	Set<Integer> keys = new HashSet<Integer>();
-	Set<Integer> pressedButtons = new HashSet<Integer>();
-	InputProcessor processor;
-	Component component;
-	boolean catched = false;
-	Robot robot = null;
-	long currentEventTimeStamp;
-
 	public JoglAwtInput (Component component) {
 		setListeners(component);
+		frame = findJFrame(component);
+		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		try {
 			robot = new Robot(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice());
-		} catch (HeadlessException e) {
-		} catch (AWTException e) {
+		} catch (HeadlessException | AWTException ignored) {
 		}
 	}
 
-	public void setListeners (Component component) {
+	public void startTuioClient() {
+		tuioClient = new TuioClient();
+		tuioClient.connect();
+	}
+
+	public void startTuioClient(int port) {
+		tuioClient = new TuioClient(port);
+		tuioClient.connect();
+	}
+
+	public void stopTuioClient() {
+		if(tuioClient == null)
+			return;
+
+		tuioClient.disconnect();
+		tuioClient = null;
+	}
+
+	private boolean tuioRunning() {
+		return tuioClient != null && tuioClient.isConnected();
+	}
+
+	private int getFreePointer() {
+		// pointer 0 is for mouse
+		for(int i = 1; i < maxPointers; i++)
+			if(!usedPointers.contains(i)) {
+				usedPointers.add(i);
+				return i;
+			}
+		return 0;
+	}
+
+	private void freePointer(int pointer) {
+		usedPointers.remove(pointer);
+	}
+
+	public void setListeners (Component newComponent) {
 		if (this.component != null) {
 			component.removeMouseListener(this);
 			component.removeMouseMotionListener(this);
 			component.removeMouseWheelListener(this);
 			component.removeKeyListener(this);
 		}
+
+		this.component = newComponent;
 		component.addMouseListener(this);
 		component.addMouseMotionListener(this);
 		component.addMouseWheelListener(this);
 		component.addKeyListener(this);
 		component.setFocusTraversalKeysEnabled(false);
-		this.component = component;
+		frame = findJFrame(newComponent);
 	}
 
 	@Override
@@ -185,7 +196,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 				JPanel textPanel = new JPanel() {
 					public boolean isOptimizedDrawingEnabled () {
 						return false;
-					};
+					}
 				};
 
 				textPanel.setLayout(new OverlayLayout(textPanel));
@@ -218,10 +229,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 					}
 
 					private void updated () {
-						if (textField.getText().length() == 0)
-							placeholderLabel.setVisible(true);
-						else
-							placeholderLabel.setVisible(false);
+						placeholderLabel.setVisible(textField.getText().length() == 0);
 					}
 				});
 
@@ -254,8 +262,8 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 				Object selectedValue = pane.getValue();
 
-				if (selectedValue != null && (selectedValue instanceof Integer)
-						&& ((Integer)selectedValue).intValue() == JOptionPane.OK_OPTION) {
+				if ((selectedValue instanceof Integer)
+						&& (Integer) selectedValue == JOptionPane.OK_OPTION) {
 					listener.input(textField.getText());
 				} else {
 					listener.canceled();
@@ -267,28 +275,26 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public int getX () {
-		return touchX;
+		return lastTouchX;
 	}
 
 	@Override
 	public int getX (int pointer) {
-		if (pointer == 0)
-			return touchX;
-		else
-			return 0;
+		if(pointer < maxPointers)
+			return touchX[pointer];
+		return 0;
 	}
 
 	@Override
 	public int getY () {
-		return touchY;
+		return lastTouchY;
 	}
 
 	@Override
 	public int getY (int pointer) {
-		if (pointer == 0)
-			return touchY;
-		else
-			return 0;
+		if(pointer < maxPointers)
+			return touchY[pointer];
+		return 0;
 	}
 
 	@Override
@@ -388,8 +394,10 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			}
 
 			if (touchEvents.size() == 0) {
-				deltaX = 0;
-				deltaY = 0;
+				for(int i = 0; i < maxPointers; i++) {
+					deltaX[i] = 0;
+					deltaY[i] = 0;
+				}
 			}
 
 			keyEvents.clear();
@@ -423,17 +431,24 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.timeStamp = System.nanoTime();
 			touchEvents.add(event);
 
-			deltaX = event.x - touchX;
-			deltaY = event.y - touchY;
-			touchX = event.x;
-			touchY = event.y;
+			deltaX[0] = event.x - touchX[0];
+			deltaY[0] = event.y - touchY[0];
+			touchX[0] = event.x;
+			touchY[0] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
 			checkCatched(e);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
 	@Override
 	public void mouseMoved (MouseEvent e) {
+		if(tuioRunning())
+			return;
+
 		synchronized (this) {
 			TouchEvent event = usedTouchEvents.obtain();
 			event.pointer = 0;
@@ -443,12 +458,16 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.timeStamp = System.nanoTime();
 			touchEvents.add(event);
 
-			deltaX = event.x - touchX;
-			deltaY = event.y - touchY;
-			touchX = event.x;
-			touchY = event.y;
+			deltaX[0] = event.x - touchX[0];
+			deltaY[0] = event.y - touchY[0];
+			touchX[0] = event.x;
+			touchY[0] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
 			checkCatched(e);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
@@ -458,16 +477,22 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void mouseEntered (MouseEvent e) {
-		touchX = e.getX();
-		touchY = e.getY();
+		if(tuioRunning())
+			return;
+
+		touchX[0] = e.getX();
+		touchY[0] = e.getY();
 		checkCatched(e);
-		Gdx.graphics.requestRendering();
+		requestRendering();
 	}
 
 	@Override
 	public void mouseExited (MouseEvent e) {
+		if(tuioRunning())
+			return;
+
 		checkCatched(e);
-		Gdx.graphics.requestRendering();
+		requestRendering();
 	}
 
 	private void checkCatched (MouseEvent e) {
@@ -489,6 +514,9 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void mousePressed (MouseEvent e) {
+		if(tuioRunning())
+			return;
+
 		synchronized (this) {
 			TouchEvent event = usedTouchEvents.obtain();
 			event.pointer = 0;
@@ -499,18 +527,25 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.timeStamp = System.nanoTime();
 			touchEvents.add(event);
 
-			deltaX = event.x - touchX;
-			deltaY = event.y - touchY;
-			touchX = event.x;
-			touchY = event.y;
+			deltaX[0] = event.x - touchX[0];
+			deltaY[0] = event.y - touchY[0];
+			touchX[0] = event.x;
+			touchY[0] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
 			touchDown = true;
 			pressedButtons.add(event.button);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
 	@Override
 	public void mouseReleased (MouseEvent e) {
+		if(tuioRunning())
+			return;
+
 		synchronized (this) {
 			TouchEvent event = usedTouchEvents.obtain();
 			event.pointer = 0;
@@ -521,13 +556,17 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.timeStamp = System.nanoTime();
 			touchEvents.add(event);
 
-			deltaX = event.x - touchX;
-			deltaY = event.y - touchY;
-			touchX = event.x;
-			touchY = event.y;
+			deltaX[0] = event.x - touchX[0];
+			deltaY[0] = event.y - touchY[0];
+			touchX[0] = event.x;
+			touchY[0] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
 			pressedButtons.remove(event.button);
 			if (pressedButtons.size() == 0) touchDown = false;
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
@@ -540,7 +579,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.scrollAmount = e.getWheelRotation();
 			event.timeStamp = System.nanoTime();
 			touchEvents.add(event);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
@@ -554,8 +593,13 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.timeStamp = System.nanoTime();
 			keyEvents.add(event);
 			keys.add(event.keyCode);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
+	}
+
+	void requestRendering() {
+		if(Gdx.graphics != null)
+			Gdx.graphics.requestRendering();
 	}
 
 	@Override
@@ -568,7 +612,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.timeStamp = System.nanoTime();
 			keyEvents.add(event);
 			keys.remove(event.keyCode);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
@@ -581,7 +625,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 			event.type = KeyEvent.KEY_TYPED;
 			event.timeStamp = System.nanoTime();
 			keyEvents.add(event);
-			Gdx.graphics.requestRendering();
+			requestRendering();
 		}
 	}
 
@@ -734,8 +778,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public boolean isPeripheralAvailable (Peripheral peripheral) {
-		if (peripheral == Peripheral.HardwareKeyboard) return true;
-		return false;
+		return peripheral == Peripheral.HardwareKeyboard;
 	}
 
 	@Override
@@ -786,23 +829,25 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public int getDeltaX () {
-		return deltaX;
+		return lastDeltaX;
 	}
 
 	@Override
 	public int getDeltaX (int pointer) {
-		if (pointer == 0) return deltaX;
+		if(pointer < maxPointers)
+			return deltaX[pointer];
 		return 0;
 	}
 
 	@Override
 	public int getDeltaY () {
-		return deltaY;
+		return lastDeltaY;
 	}
 
 	@Override
 	public int getDeltaY (int pointer) {
-		if (pointer == 0) return deltaY;
+		if(pointer < maxPointers)
+			return deltaY[pointer];
 		return 0;
 	}
 
@@ -876,6 +921,220 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public int getMaxPointers() {
-		return 0;
+		return maxPointers;
+	}
+
+	@Override
+	public void addTuioObject(TuioObject tuioObject) {
+
+	}
+
+	@Override
+	public void updateTuioObject(TuioObject tuioObject) {
+
+	}
+
+	@Override
+	public void removeTuioObject(TuioObject tuioObject) {
+
+	}
+
+	@Override
+	public void addTuioCursor(TuioCursor cursor) {
+		int absoluteX =	(int)(cursor.getX() * screenSize.width);
+		int absoluteY =	(int)(cursor.getY() * screenSize.height);
+		long sessionID = cursor.getSessionID();
+
+		Point location = component.getLocationOnScreen();
+		Dimension size = component.getSize();
+
+		// only if event hits the component
+		if(absoluteX < location.x || absoluteX >= location.x + size.width
+				|| absoluteY < location.y || absoluteY >= location.y + size.height)
+			return;
+
+		// avoid dialogs or contextmenus
+		Window[] windows = frame.getOwnedWindows();
+		for (Window window : windows) {
+			if (!window.isShowing())
+				continue;
+
+			if (window instanceof Dialog && ((Dialog) window).isModal() || window.isActive() || window.isAlwaysOnTop()) {
+				return;
+			}
+		}
+
+		absoluteX -= location.x;
+		absoluteY -= location.y;
+
+		synchronized (this) {
+			int pointer = getFreePointer();
+			tuioIDToPointer.put(sessionID, pointer);
+			TouchEvent event = usedTouchEvents.obtain();
+			event.pointer = pointer;
+			event.x = absoluteX;
+			event.y = absoluteY;
+			event.type = TouchEvent.TOUCH_DOWN;
+			event.timeStamp = System.nanoTime();
+			touchEvents.add(event);
+
+			deltaX[pointer] = event.x - touchX[pointer];
+			deltaY[pointer] = event.y - touchY[pointer];
+			touchX[pointer] = event.x;
+			touchY[pointer] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
+			touchDown = true;
+			requestRendering();
+		}
+	}
+
+	@Override
+	public void updateTuioCursor(TuioCursor cursor) {
+		int absoluteX =	(int)(cursor.getX() * screenSize.width);
+		int absoluteY =	(int)(cursor.getY() * screenSize.height);
+		long sessionID = cursor.getSessionID();
+		Integer pointer = tuioIDToPointer.get(sessionID);
+		if (pointer == null )
+			return;
+
+		Point location = component.getLocationOnScreen();
+		Dimension size = component.getSize();
+
+		absoluteX -= location.x;
+		absoluteY -= location.y;
+
+		if(absoluteX < 0)
+			absoluteX = 0;
+
+		if(absoluteY < 0)
+			absoluteY = 0;
+
+		if(absoluteX >= size.width)
+			absoluteX = size.width - 1;
+
+		if(absoluteY >= size.height)
+			absoluteY = size.height - 1;
+
+		synchronized (this) {
+			TouchEvent event = usedTouchEvents.obtain();
+			event.pointer = pointer;
+			event.x = absoluteX;
+			event.y = absoluteY;
+			event.type = TouchEvent.TOUCH_DRAGGED;
+			event.timeStamp = System.nanoTime();
+			touchEvents.add(event);
+
+			deltaX[pointer] = event.x - touchX[pointer];
+			deltaY[pointer] = event.y - touchY[pointer];
+			touchX[pointer] = event.x;
+			touchY[pointer] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
+			requestRendering();
+		}
+	}
+
+	@Override
+	public void removeTuioCursor(TuioCursor cursor) {
+		int absoluteX =	(int)(cursor.getX() * screenSize.width);
+		int absoluteY =	(int)(cursor.getY() * screenSize.height);
+		long sessionID = cursor.getSessionID();
+		Integer pointer = tuioIDToPointer.get(sessionID);
+		if (pointer == null )
+			return;
+
+		Point location = component.getLocationOnScreen();
+		Dimension size = component.getSize();
+
+		absoluteX -= location.x;
+		absoluteY -= location.y;
+
+		if(absoluteX < 0)
+			absoluteX = 0;
+
+		if(absoluteY < 0)
+			absoluteY = 0;
+
+		if(absoluteX >= size.width)
+			absoluteX = size.width - 1;
+
+		if(absoluteY >= size.height)
+			absoluteY = size.height - 1;
+
+		synchronized (this) {
+			TouchEvent event = usedTouchEvents.obtain();
+			event.pointer = pointer;
+			event.x = absoluteX;
+			event.y = absoluteY;
+			event.type = TouchEvent.TOUCH_UP;
+			event.timeStamp = System.nanoTime();
+			touchEvents.add(event);
+
+			deltaX[pointer] = event.x - touchX[pointer];
+			deltaY[pointer] = event.y - touchY[pointer];
+			touchX[pointer] = event.x;
+			touchY[pointer] = event.y;
+			lastDeltaX = event.x - lastTouchX;
+			lastDeltaY = event.y - lastDeltaY;
+			lastTouchX = event.x;
+			lastTouchY = event.y;
+			freePointer(pointer);
+			if (usedPointers.size() == 0)
+				touchDown = false;
+
+			requestRendering();
+		}
+	}
+
+	@Override
+	public void addTuioBlob(TuioBlob tuioBlob) {
+
+	}
+
+	@Override
+	public void updateTuioBlob(TuioBlob tuioBlob) {
+
+	}
+
+	@Override
+	public void removeTuioBlob(TuioBlob tuioBlob) {
+
+	}
+
+	@Override
+	public void refresh(TuioTime tuioTime) {
+
+	}
+
+	static class KeyEvent {
+		static final int KEY_DOWN = 0;
+		static final int KEY_UP = 1;
+		static final int KEY_TYPED = 2;
+
+		long timeStamp;
+		int type;
+		int keyCode;
+		char keyChar;
+	}
+
+	static class TouchEvent {
+		static final int TOUCH_DOWN = 0;
+		static final int TOUCH_UP = 1;
+		static final int TOUCH_DRAGGED = 2;
+		static final int TOUCH_MOVED = 3;
+		static final int TOUCH_SCROLLED = 4;
+
+		long timeStamp;
+		int type;
+		int x;
+		int y;
+		int pointer;
+		int button;
+		int scrollAmount;
 	}
 }
