@@ -100,12 +100,12 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	public void startTuioClient() {
-		tuioClient = new TuioClient();
-		tuioClient.connect();
+		startTuioClient(3333);
 	}
 
 	public void startTuioClient(int port) {
 		tuioClient = new TuioClient(port);
+		tuioClient.addTuioListener(this);
 		tuioClient.connect();
 	}
 
@@ -122,8 +122,7 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	private int getFreePointer() {
-		// pointer 0 is for mouse
-		for(int i = 1; i < maxPointers; i++)
+		for(int i = 0; i < maxPointers; i++)
 			if(!usedPointers.contains(i)) {
 				usedPointers.add(i);
 				return i;
@@ -144,12 +143,14 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 		}
 
 		this.component = newComponent;
-		component.addMouseListener(this);
-		component.addMouseMotionListener(this);
-		component.addMouseWheelListener(this);
-		component.addKeyListener(this);
-		component.setFocusTraversalKeysEnabled(false);
-		frame = findJFrame(newComponent);
+		if(this.component != null) {
+			component.addMouseListener(this);
+			component.addMouseMotionListener(this);
+			component.addMouseWheelListener(this);
+			component.addKeyListener(this);
+			component.setFocusTraversalKeysEnabled(false);
+			frame = findJFrame(newComponent);
+		}
 	}
 
 	@Override
@@ -422,6 +423,9 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void mouseDragged (MouseEvent e) {
+		if(tuioRunning())
+			return;
+
 		synchronized (this) {
 			TouchEvent event = usedTouchEvents.obtain();
 			event.pointer = 0;
@@ -811,6 +815,9 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	protected static JFrame findJFrame (Component component) {
+		if(component == null)
+			return null;
+
 		Container parent = component.getParent();
 		while (parent != null) {
 			if (parent instanceof JFrame) {
@@ -941,6 +948,9 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void addTuioCursor(TuioCursor cursor) {
+		if(component == null)
+			return;
+
 		int absoluteX =	(int)(cursor.getX() * screenSize.width);
 		int absoluteY =	(int)(cursor.getY() * screenSize.height);
 		long sessionID = cursor.getSessionID();
@@ -993,6 +1003,9 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void updateTuioCursor(TuioCursor cursor) {
+		if(component == null)
+			return;
+
 		int absoluteX =	(int)(cursor.getX() * screenSize.width);
 		int absoluteY =	(int)(cursor.getY() * screenSize.height);
 		long sessionID = cursor.getSessionID();
@@ -1041,6 +1054,9 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 
 	@Override
 	public void removeTuioCursor(TuioCursor cursor) {
+		if(component == null)
+			return;
+
 		int absoluteX =	(int)(cursor.getX() * screenSize.width);
 		int absoluteY =	(int)(cursor.getY() * screenSize.height);
 		long sessionID = cursor.getSessionID();

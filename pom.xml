@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.bumfo.gdx</groupId>
+    <groupId>com.thelsing.gdx</groupId>
     <artifactId>gdx-backend-jogl</artifactId>
     <version>1.10.0</version>
     <properties>
@@ -15,11 +15,11 @@
     </properties>
     <name>Propan GDX JoGL</name>
     <description>Libgdx JoGL backend</description>
-    <url>http://github.com/bumfo/libgdx-jogl-backend</url>
+    <url>http://github.com/thelsing/libgdx-jogl-backend</url>
     <scm>
-        <connection>scm:git:git://github.com/bumfo/libgdx-jogl-backend.git</connection>
-        <developerConnection>scm:git:ssh://github.com:bumfo/libgdx-jogl-backend.git</developerConnection>
-        <url>http://github.com/bumfo/libgdx-jogl-backend/tree/master</url>
+        <connection>scm:git:git://github.com/thelsing/libgdx-jogl-backend.git</connection>
+        <developerConnection>scm:git:ssh://github.com:thelsing/libgdx-jogl-backend.git</developerConnection>
+        <url>http://github.com/thelsing/libgdx-jogl-backend/tree/master</url>
     </scm>
     <licenses>
         <license>
@@ -75,6 +75,11 @@
             <version>${jogamp.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.artistech</groupId>
+            <artifactId>tuio-lib</artifactId>
+            <version>1.1.6</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -116,69 +121,69 @@
                     <optimize>true</optimize>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <additionalparam>${javadoc.opts}</additionalparam>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>
+            <!--             <plugin>
+                           <groupId>org.apache.maven.plugins</groupId>
+                           <artifactId>maven-source-plugin</artifactId>
+                           <version>2.2.1</version>
+                           <executions>
+                               <execution>
+                                   <id>attach-sources</id>
+                                   <goals>
+                                       <goal>jar-no-fork</goal>
+                                   </goals>
+                               </execution>
+                           </executions>
+                       </plugin>
+                       <plugin>
+                           <groupId>org.apache.maven.plugins</groupId>
+                           <artifactId>maven-javadoc-plugin</artifactId>
+                           <version>2.9.1</version>
+                           <executions>
+                               <execution>
+                                   <id>attach-javadocs</id>
+                                   <goals>
+                                       <goal>jar</goal>
+                                   </goals>
+                                   <configuration>
+                                       <additionalparam>${javadoc.opts}</additionalparam>
+                                   </configuration>
+                               </execution>
+                           </executions>
+                       </plugin>
+                     <plugin>
+                           <groupId>org.apache.maven.plugins</groupId>
+                           <artifactId>maven-gpg-plugin</artifactId>
+                           <version>1.6</version>
+                           <executions>
+                               <execution>
+                                   <id>sign-artifacts</id>
+                                   <phase>verify</phase>
+                                   <goals>
+                                       <goal>sign</goal>
+                                   </goals>
+                               </execution>
+                           </executions>
+                       </plugin>
+                       <plugin>
+                           <groupId>org.sonatype.plugins</groupId>
+                           <artifactId>nexus-staging-maven-plugin</artifactId>
+                           <version>1.6.7</version>
+                           <extensions>true</extensions>
+                           <executions>
+                               <execution>
+                                   <id>default-deploy</id>
+                                   <phase>deploy</phase>
+                                   <goals>
+                                       <goal>deploy</goal>
+                                   </goals>
+                               </execution>
+                           </executions>
+                           <configuration>
+                               <serverId>ossrh</serverId>
+                               <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                               <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                           </configuration>
+                       </plugin>-->
+                   </plugins>
+               </build>
+           </project>
