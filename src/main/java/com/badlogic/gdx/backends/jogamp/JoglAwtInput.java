@@ -153,6 +153,10 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 		}
 	}
 
+	public void refreshJFrame() {
+		frame = findJFrame(component);
+	}
+
 	@Override
 	public float getAccelerometerX () {
 		return 0;
