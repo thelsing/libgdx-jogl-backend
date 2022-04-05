@@ -54,6 +54,7 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 	int frames;
 	boolean paused = true, disposed = false;
 	JoglApplicationConfiguration config;
+	private Sync sync = new Sync();
 
 	long frameId = -1;
 	GL20 gl20;
@@ -169,6 +170,7 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 		synchronized (this) {
 			if (!paused) {
 				final boolean shouldRender = ((JoglApplicationBase)Gdx.app).executeRunnables() | shouldRender();
+				int frameRate = config.foregroundFPS;
 				if (shouldRender && !cancelRendering) {
 					updateTime();
 					((JoglInput) (Gdx.input)).processEvents();
@@ -177,7 +179,13 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 					if (Gdx.audio != null) {
 					    ((OpenALLwjglAudio) Gdx.audio).update();
 					}
+				} else {
+					// Sleeps to avoid wasting CPU in an empty loop.
+					if (frameRate == -1) frameRate = 10;
+					if (frameRate == 0) frameRate = config.backgroundFPS;
+					if (frameRate == 0) frameRate = 30;
 				}
+				if (frameRate > 0) sync.sync(frameRate);
 			}
 		}
 	}

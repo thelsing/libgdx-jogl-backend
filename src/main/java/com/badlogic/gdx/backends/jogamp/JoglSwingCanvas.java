@@ -23,17 +23,11 @@ import com.jogamp.opengl.awt.GLJPanel;
 public class JoglSwingCanvas extends JoglApplicationBase {
 
 	public JoglSwingCanvas(final ApplicationListener listener, final String title, final int width, final int height) {
-		this(listener, title, width, height, null);
+		this(listener, new JoglAwtApplicationConfiguration(title, width, height));
 	}
 
-	public JoglSwingCanvas(final ApplicationListener listener, final String title, final int width, final int height,
-			JoglSwingCanvas shared) {
-		this(listener, new JoglAwtApplicationConfiguration(title, width, height), null);
-	}
-
-	public JoglSwingCanvas(ApplicationListener listener, JoglAwtApplicationConfiguration config, JoglSwingCanvas shared) {
+	public JoglSwingCanvas(ApplicationListener listener, JoglAwtApplicationConfiguration config) {
 		super(listener, config);
-		//FIXME take the shared canvas into account
 	}
 
 	@Override
