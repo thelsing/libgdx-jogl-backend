@@ -369,4 +369,9 @@ public class JoglSwingGraphics extends JoglGraphicsBase {
 
 		return null;
 	}
+
+	@Override
+	protected boolean isBackGround() {
+		return !getCanvas().isVisible();
+	}
 }

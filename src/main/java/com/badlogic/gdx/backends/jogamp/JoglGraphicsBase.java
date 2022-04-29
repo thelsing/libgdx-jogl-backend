@@ -170,7 +170,8 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 		synchronized (this) {
 			if (!paused) {
 				final boolean shouldRender = ((JoglApplicationBase)Gdx.app).executeRunnables() | shouldRender();
-				int frameRate = config.foregroundFPS;
+				int frameRate = isBackGround() ? config.backgroundFPS : config.foregroundFPS;
+
 				if (shouldRender && !cancelRendering) {
 					updateTime();
 					((JoglInput) (Gdx.input)).processEvents();
@@ -407,6 +408,8 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 	public GLVersion getGLVersion () {
 		return glVersion;
 	}
+
+	protected abstract boolean isBackGround();
 
 	private static void initGLVersion () {
 		String versionString = GLContext.getCurrent().getGLVersionNumber().toString();

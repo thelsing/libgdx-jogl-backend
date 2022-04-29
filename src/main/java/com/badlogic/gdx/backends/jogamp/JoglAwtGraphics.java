@@ -118,6 +118,11 @@ public class JoglAwtGraphics extends JoglGraphicsBase {
 	}
 
 	@Override
+	protected boolean isBackGround() {
+		return !getCanvas().isVisible();
+	}
+
+	@Override
 	public boolean supportsDisplayModeChange () {
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice device = genv.getDefaultScreenDevice();
