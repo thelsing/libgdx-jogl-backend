@@ -126,6 +126,11 @@ public class JoglNewtGraphics extends JoglGraphicsBase {
 	}
 
 	@Override
+	protected boolean isBackGround() {
+		return false;
+	}
+
+	@Override
 	public boolean supportsDisplayModeChange () {
 		return true;
 	}
