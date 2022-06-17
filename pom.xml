@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.thelsing.gdx</groupId>
     <artifactId>gdx-backend-jogl</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <properties>
-        <libgdx.version>1.10.0</libgdx.version>
-        <jogamp.version>2.3.2</jogamp.version>
+        <libgdx.version>1.11.0</libgdx.version>
+        <jogamp.version>v2.4.0-rc4</jogamp.version>
         <javadoc.opts>-Xdoclint:none</javadoc.opts>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gpg.executable>gpg2</gpg.executable>
@@ -27,13 +27,14 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+    <repositories>
+    <repository>
+        <id>jzy3d</id>
+        <url>https://maven.jzy3d.org/releases/</url>
+    </repository>
+    </repositories>
     <dependencies>
-        <dependency>
-            <groupId>org.jogamp.joal</groupId>
-            <artifactId>joal-main</artifactId>
-            <version>${jogamp.version}</version>
-        </dependency>
-        <dependency>
+          <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
             <version>${libgdx.version}</version>
@@ -60,20 +61,56 @@
             <version>0.0.17</version>
         </dependency>
         <dependency>
-            <groupId>org.jogamp.gluegen</groupId>
-            <artifactId>gluegen-rt-main</artifactId>
-            <version>${jogamp.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jogamp.gluegen</groupId>
-            <artifactId>gluegen-rt-main</artifactId>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all</artifactId>
             <version>${jogamp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
-            <artifactId>jogl-all-main</artifactId>
+            <artifactId>jogl-all-natives-macosx-universal</artifactId>
             <version>${jogamp.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all-natives-windows-amd64</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all-natives-linux-amd64</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all-natives-linux-armv6hf</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt-natives-macosx-universal</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt-natives-windows-amd64</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt-natives-linux-amd64</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt-natives-linux-armv6hf</artifactId>
+            <version>${jogamp.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.artistech</groupId>
             <artifactId>tuio-lib</artifactId>
