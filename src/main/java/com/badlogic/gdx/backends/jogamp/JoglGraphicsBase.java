@@ -391,12 +391,12 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 
 	@Override
 	public int getBackBufferWidth() {
-		return getWidth();
+		return (int)(getWidth() * getBackBufferScale());
 	}
 
 	@Override
 	public int getBackBufferHeight() {
-		return getHeight ();
+		return (int)(getHeight () * getBackBufferScale());
 	}
 
 	@Override

@@ -15,13 +15,7 @@
  ******************************************************************************/
 package com.badlogic.gdx.backends.jogamp;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -64,7 +58,7 @@ public class JoglSwingGraphics extends JoglGraphicsBase {
 
 	@Override
 	public float getBackBufferScale() {
-		return 0;
+		return Toolkit.getDefaultToolkit().getScreenResolution() / 96.0f;
 	}
 
 	@Override
