@@ -557,10 +557,6 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 	}
 
 	@Override
-	public void vibrate (int milliseconds) {
-	}
-
-	@Override
 	public boolean justTouched () {
 		return justTouched;
 	}
@@ -573,14 +569,6 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 	@Override
 	public boolean isButtonJustPressed(int button) {
 		return false;
-	}
-
-	@Override
-	public void vibrate (long[] pattern, int repeat) {
-	}
-
-	@Override
-	public void cancelVibrate () {
 	}
 
 	@Override
@@ -718,5 +706,21 @@ public class JoglNewtInput implements JoglInput, MouseListener, KeyListener {
 	@Override
 	public int getMaxPointers() {
 		return 0;
+	}
+
+	@Override
+	public void vibrate(int milliseconds) {
+	}
+
+	@Override
+	public void vibrate(int milliseconds, boolean fallback) {
+	}
+
+	@Override
+	public void vibrate(int milliseconds, int amplitude, boolean fallback) {
+	}
+
+	@Override
+	public void vibrate(Input.VibrationType vibrationType) {
 	}
 }

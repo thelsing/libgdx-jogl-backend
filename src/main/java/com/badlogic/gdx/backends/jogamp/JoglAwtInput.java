@@ -743,7 +743,19 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	@Override
-	public void vibrate (int milliseconds) {
+	public void vibrate(int milliseconds) {
+	}
+
+	@Override
+	public void vibrate(int milliseconds, boolean fallback) {
+	}
+
+	@Override
+	public void vibrate(int milliseconds, int amplitude, boolean fallback) {
+	}
+
+	@Override
+	public void vibrate(Input.VibrationType vibrationType) {
 	}
 
 	@Override
@@ -759,14 +771,6 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	@Override
 	public boolean isButtonJustPressed(int button) {
 		return false;
-	}
-
-	@Override
-	public void vibrate (long[] pattern, int repeat) {
-	}
-
-	@Override
-	public void cancelVibrate () {
 	}
 
 	@Override

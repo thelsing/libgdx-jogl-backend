@@ -23,6 +23,8 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.audio.OpenALLwjgl3Audio;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.GL31;
+import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.jogamp.opengl.GL;
@@ -59,6 +61,10 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 	long frameId = -1;
 	GL20 gl20;
 	GL30 gl30;
+
+	GL31 gl31;
+
+	GL32 gl32;
 
 
 	void initialize (ApplicationListener listener, JoglApplicationConfiguration config) {
@@ -283,6 +289,36 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 					+ ", FBO extension: false" + (glInfo.isEmpty() ? "" : ("\n" + glInfo)));
 			}
 		}
+	}
+
+	@Override
+	public boolean isGL31Available() {
+		return gl31 != null;
+	}
+
+	@Override
+	public boolean isGL32Available() {
+		return gl32 != null;
+	}
+
+	@Override
+	public GL31 getGL31() {
+		return gl31;
+	}
+
+	@Override
+	public GL32 getGL32() {
+		return gl32;
+	}
+
+	@Override
+	public void setGL31(GL31 gl31) {
+		this.gl31 = gl31;
+	}
+
+	@Override
+	public void setGL32(GL32 gl32) {
+		this.gl32 = gl32;
 	}
 
 	@Override
