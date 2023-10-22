@@ -168,7 +168,7 @@ public abstract class JoglGraphicsBase implements Graphics, GLEventListener {
 
 	@Override
 	public void reshape (GLAutoDrawable drawable, int x, int y, int width, int height) {
-		listener.resize(width, height);
+		listener.resize((int) (width/getBackBufferScale()), (int) (height/getBackBufferScale()));
 	}
 
 	@Override
