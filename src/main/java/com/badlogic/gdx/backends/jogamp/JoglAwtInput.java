@@ -46,6 +46,7 @@ import TUIO.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.input.NativeInputConfiguration;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 
@@ -411,17 +412,27 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	@Override
-	public void setCatchBackKey (boolean catchBack) {
-
-	}
-
-	@Override
 	public void setOnscreenKeyboardVisible (boolean visible) {
 
 	}
 
 	@Override
 	public void setOnscreenKeyboardVisible(boolean b, OnscreenKeyboardType onscreenKeyboardType) {
+
+	}
+
+	@Override
+	public void openTextInputField(NativeInputConfiguration nativeInputConfiguration) {
+
+	}
+
+	@Override
+	public void closeTextInputField(boolean b) {
+
+	}
+
+	@Override
+	public void setKeyboardHeightObserver(KeyboardHeightObserver keyboardHeightObserver) {
 
 	}
 
@@ -874,12 +885,6 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	}
 
 	@Override
-	public void setCatchMenuKey (boolean catchMenu) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public long getCurrentEventTime () {
 		return currentEventTimeStamp;
 	}
@@ -893,16 +898,6 @@ public class JoglAwtInput implements JoglInput, MouseMotionListener, MouseListen
 	@Override
 	public boolean isKeyJustPressed(int key) {
 		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCatchBackKey() {
-		return false;
-	}
-
-	@Override
-	public boolean isCatchMenuKey () {
 		return false;
 	}
 
