@@ -4,14 +4,14 @@ Non official LibGDX JoGL backend, it is an experimental backend to
 libgdx based on JoGL, you might experience some crash, if/when it
 happens please open an issue.
 
-Libgdx version: 1.12
+Libgdx version: 1.13.1
 
 Forked from: [https://github.com/gouessej/libgdx](https://github.com/gouessej/libgdx)
 
 
 ## Gradle
 ```
-compile 'com.thelsing.gdx:gdx-backend-jogl:1.12.1'
+compile 'com.thelsing.gdx:gdx-backend-jogl:1.13.1'
 ```
 
 ## Maven
@@ -19,6 +19,6 @@ compile 'com.thelsing.gdx:gdx-backend-jogl:1.12.1'
 <dependency>
   <groupId>com.thelsing.gdx</groupId>
   <artifactId>gdx-backend-jogl</artifactId>
-  <version>1.12.1</version>
+  <version>1.13.1</version>
 </dependency>
 ```
